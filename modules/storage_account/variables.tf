@@ -12,6 +12,11 @@ variable "sta_name" {
   }
 }
 
+variable "kv_id" {
+  type = string
+  description = "(Required) ID of the Key Vault to be used to store deploy sensitive data and outputs"
+}
+
 ####OPTIONAL Input Variables
 variable "azure_location" {
   type        = string
@@ -109,13 +114,7 @@ variable "sta_queues" {
   }))
   description = "(Optional) Object collection with information for queues to be created in the deployed Storage Account."
   default     = []
-}
-
-variable "kv_id" {
-  type = string
-  description = "(Optional) ID of the Key Vault to be used to store deploy sensitive data and outputs"
-  default = null
-}
+} 
 
 # Local variables used to reduce repetition 
 locals {

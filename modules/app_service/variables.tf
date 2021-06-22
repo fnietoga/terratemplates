@@ -29,7 +29,7 @@ variable "azure_location" {
 }
 variable "tags" {
   type        = map(any)
-  description = "(Optional) A mapping of tags which should be assigned to the Resource Group."
+  description = "(Optional) A mapping of tags which should be assigned to the resource."
   default     = {}
 }
 variable "plan_kind" {
@@ -170,6 +170,13 @@ variable "app_allowed_ips" {
   description = "(Optional) List of IP Addresses to allow through the App Service firewall."
   default     = []
 }
+
+variable "app_settings" {
+  type        = map(any)
+  description = "(Optional) A mapping of app settings which should be assigned to the App Service"
+  default     = {}
+}
+
 # Local variables used to reduce repetition 
 locals {
   app_fw_ips = concat(var.app_allowed_ips, ["${chomp(data.http.myip.body) != "" ? format("%s/%s",chomp(data.http.myip.body),"32") : null}"]) 

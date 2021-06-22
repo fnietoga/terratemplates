@@ -25,7 +25,7 @@ variable "azure_location" {
 
 variable "tags" {
   type = map
-  description = "(Optional) A mapping of tags which should be assigned to the Resource Group."
+  description = "(Optional) A mapping of tags which should be assigned to the resource."
   default= {}
 } 
 

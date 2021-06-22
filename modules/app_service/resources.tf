@@ -75,9 +75,7 @@ resource "azurerm_app_service" "app" {
     }
   }
 
-  # app_settings = {
-  #   "ExternalAuth.System.OpenIdConnect.Authority"                = "@Microsoft.KeyVault(VaultName=${azurerm_key_vault.deploy_kv.name};SecretName=OpenIdConnectAuthority)"
-  # }
+  app_settings = var.app_settings
 
   logs {
     http_logs {
@@ -148,9 +146,7 @@ resource "azurerm_app_service_slot" "app_slot" {
     }
   }
 
-  # app_settings = {
-  #   "ExternalAuth.System.OpenIdConnect.Authority"                = "@Microsoft.KeyVault(VaultName=${azurerm_key_vault.deploy_kv.name};SecretName=OpenIdConnectAuthority)"
-  # }
+  app_settings = var.app_settings
 
   logs {
     http_logs {

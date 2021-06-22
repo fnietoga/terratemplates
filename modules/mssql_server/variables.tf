@@ -5,7 +5,7 @@ variable "resource_group_name" {
 }
 variable "server_name" {
   type        = string
-  description = "(Required)  The name of the Microsoft SQL Server. This needs to be globally unique within Azure."
+  description = "(Required) The name of the Microsoft SQL Server. This needs to be globally unique within Azure."
   validation {
     condition     = can(regex("^[a-z0-9]{1}[a-z0-9-]{1,61}[a-z0-9]{1}$", var.server_name))
     error_message = "Server name can contain only lowercase letters, numbers, and hyphen; but can't start or end with hyphen or have more than 63 characters."

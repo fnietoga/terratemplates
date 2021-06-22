@@ -10,7 +10,7 @@ resource "azurerm_app_service_plan" "app_plan" {
   resource_group_name          = var.resource_group_name
   kind                         = var.plan_kind
   reserved                     = var.plan_kind == "Linux" ? true : var.plan_reserved
-  maximum_elastic_worker_count = 2
+  #maximum_elastic_worker_count = 2
   per_site_scaling             = var.plan_per_site_scaling
 
   sku {

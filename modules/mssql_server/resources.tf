@@ -64,7 +64,7 @@ resource "azurerm_mssql_database" "database" {
   server_id          = azurerm_mssql_server.server.id
   create_mode        = "Default"
   sku_name           = var.database_sku_name
-  license_type       = var.database_license_type
+  #license_type       = var.database_license_type
   collation          = var.database_collation
   max_size_gb        = var.database_max_size_gb != 0 ? var.database_max_size_gb : null
   zone_redundant     = false

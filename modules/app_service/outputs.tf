@@ -54,17 +54,11 @@ resource "azurerm_key_vault_secret" "output_app_outbound_ip_addresses" {
   value        = azurerm_app_service.app.outbound_ip_addresses
   key_vault_id = var.kv_id
 }
-resource "azurerm_key_vault_secret" "output_app_outbound_ip_address_list" {
-  name         = "appservice-${azurerm_app_service.app.name}-outbound-ip-address-list"
-  value        = azurerm_app_service.app.outbound_ip_address_list
-  key_vault_id = var.kv_id
-} 
 resource "azurerm_key_vault_secret" "output_app_identity_principal_id" {
   name         = "appservice-${azurerm_app_service.app.name}-identity-principal-id"
   value        = azurerm_app_service.app.identity[0].principal_id
   key_vault_id = var.kv_id
-}
- 
+} 
 resource "azurerm_key_vault_secret" "output_slots_name" {
   count = length(var.app_slots_names)
   

@@ -47,7 +47,6 @@ resource "azurerm_app_service" "app" {
     token_store_enabled           = var.ad_app_id != "" ? true : null
     issuer                        = var.ad_app_id != "" ? "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/v2.0" : null
     unauthenticated_client_action = var.ad_app_id != "" ? "RedirectToLoginPage" : null
-
     dynamic "active_directory" {
       for_each = var.ad_app_id != "" ? [1] : []
       content {
@@ -117,12 +116,10 @@ resource "azurerm_app_service_slot" "app_slot" {
     #runtime_version               = var.ad_app_id != "" ? "v2" : null
     token_store_enabled           = var.ad_app_id != "" ? true : null
     unauthenticated_client_action = var.ad_app_id != "" ? "RedirectToLoginPage" : null
-
     dynamic "active_directory" {
       for_each = var.ad_app_id != "" ? [1] : []
       content {
         client_id = var.ad_app_id
-
       }
     }
   }
@@ -163,3 +160,33 @@ resource "azurerm_app_service_slot" "app_slot" {
 
 }
 
+resource "azurerm_app_service_certificate" "app_certificate" {
+  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+
+  name                = "${var.custom_hostname}-cert"
+  location            = var.azure_location
+  resource_group_name = var.resource_group_name
+  key_vault_secret_id = var.key_vault_secret_id
+}
+
+resource "azurerm_app_service_custom_hostname_binding" "app_binding" {
+  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+
+  hostname            = var.custom_hostname
+  app_service_name    = azurerm_app_service.app.name
+  resource_group_name = var.resource_group_name
+
+  # Ignore ssl_state and thumbprint as they are managed using
+  # azurerm_app_service_certificate_binding.app_certificate_binding
+  lifecycle {
+    ignore_changes = [ssl_state, thumbprint]
+  }
+}
+
+resource  "azurerm_app_service_certificate_binding" "app_certificate_binding" {
+  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+
+  hostname_binding_id = azurerm_app_service_custom_hostname_binding.app_binding[0].id
+  certificate_id      = azurerm_app_service_certificate.app_certificate[0].id
+  ssl_state           = "SniEnabled"
+}

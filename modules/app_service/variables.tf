@@ -183,6 +183,18 @@ variable "ad_app_id" {
   default = ""
 }
 
+variable "key_vault_secret_id" {
+  type = string
+  description = "(Optional) The ID of the Key Vault secret. Changing this forces a new resource to be created."
+  default = ""
+}
+
+variable "custom_hostname" {
+  type = string
+  description = "(Optional) The hostname to be assigned to the App Service. A CNAME needs to be configured from this Hostname to the Azure Website - otherwise Azure will reject the Hostname Binding."
+  default = ""
+}
+
 # Local variables used to reduce repetition 
 locals {
   app_fw_ips = concat(var.app_allowed_ips, ["${chomp(data.http.myip.body) != "" ? format("%s/%s",chomp(data.http.myip.body),"32") : null}"]) 

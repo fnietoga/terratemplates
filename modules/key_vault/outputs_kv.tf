@@ -1,7 +1,7 @@
-output "kv_id" {
+output "id" {
     value = azurerm_key_vault.deploy_kv.id
 }
-output "kv_url" {
+output "url" {
     value = azurerm_key_vault.deploy_kv.vault_uri
 }
 

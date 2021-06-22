@@ -60,16 +60,16 @@ resource "azurerm_key_vault_secret" "output_app_identity_principal_id" {
   key_vault_id = var.kv_id
 } 
 resource "azurerm_key_vault_secret" "output_slots_name" {
-  count = length(var.app_slots_names)
+  for_each = { for slot in azurerm_app_service_slot.app_slot : slot.name => slot }
   
-  name         = "appslot-${azurerm_app_service_slot.app_slot[count.index]}-name"
-  value        = azurerm_app_service_slot.app_slot[count.index].name
+  name         = "appslot-${each.value.app_service_name}-${each.value.name}-name"
+  value        = each.value.name
   key_vault_id =  var.kv_id
 }
 resource "azurerm_key_vault_secret" "output_slots_hostname" {
-  count = length(var.app_slots_names)
+  for_each = { for slot in azurerm_app_service_slot.app_slot : slot.name => slot }
   
-  name         = "appslot-${azurerm_app_service_slot.app_slot[count.index]}-hostname"
-  value        = azurerm_app_service_slot.app_slot[count.index].default_site_hostname
+  name         = "appslot-${each.value.app_service_name}-${each.value.name}-hostname"
+  value        = each.value.default_site_hostname
   key_vault_id =  var.kv_id
-}
+} 

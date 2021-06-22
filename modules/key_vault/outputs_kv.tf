@@ -16,4 +16,3 @@ resource "azurerm_key_vault_secret" "output_keyvault_url" {
   value        = azurerm_key_vault.deploy_kv.vault_uri
   key_vault_id = azurerm_key_vault.deploy_kv.id
 }
-

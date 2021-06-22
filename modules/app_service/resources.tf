@@ -41,15 +41,15 @@ resource "azurerm_app_service" "app" {
   }
 
   auth_settings {
-    enabled          = var.ad_app_id ? true : false
-    default_provider = var.ad_app_id ? "AzureActiveDirectory" : null
+    enabled          = var.ad_app_id != "" ? true : false
+    default_provider = var.ad_app_id != "" ? "AzureActiveDirectory" : null
     #runtime_version               = var.ad_app_id != "" ? "v2" : null
-    token_store_enabled           = var.ad_app_id ? true : null
-    issuer                        = var.ad_app_id ? "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/v2.0" : null
-    unauthenticated_client_action = var.ad_app_id ? "RedirectToLoginPage" : null
+    token_store_enabled           = var.ad_app_id != "" ? true : null
+    issuer                        = var.ad_app_id != "" ? "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/v2.0" : null
+    unauthenticated_client_action = var.ad_app_id != "" ? "RedirectToLoginPage" : null
 
     dynamic "active_directory" {
-      for_each = var.ad_app_id ? [1] : []
+      for_each = var.ad_app_id != "" ? [1] : []
       content {
         client_id = var.ad_app_id
       }
@@ -112,14 +112,14 @@ resource "azurerm_app_service_slot" "app_slot" {
 
 
   auth_settings {
-    enabled          = var.ad_app_id ? true : false
-    default_provider = var.ad_app_id ? "AzureActiveDirectory" : null
-    #runtime_version               = var.ad_app_id ? "v2" : null
-    token_store_enabled           = var.ad_app_id ? true : null
-    unauthenticated_client_action = var.ad_app_id ? "RedirectToLoginPage" : null
+    enabled          = var.ad_app_id != "" ? true : false
+    default_provider = var.ad_app_id != "" ? "AzureActiveDirectory" : null
+    #runtime_version               = var.ad_app_id != "" ? "v2" : null
+    token_store_enabled           = var.ad_app_id != "" ? true : null
+    unauthenticated_client_action = var.ad_app_id != "" ? "RedirectToLoginPage" : null
 
     dynamic "active_directory" {
-      for_each = var.ad_app_id ? [1] : []
+      for_each = var.ad_app_id != "" ? [1] : []
       content {
         client_id = var.ad_app_id
 

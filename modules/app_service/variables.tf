@@ -180,7 +180,7 @@ variable "app_settings" {
 variable "ad_app_id" {
   type = string
   description = "(Optional) Application Id of the Azure AD Application registered for App Service authorization."
-  default = null
+  default = ""
 }
 
 # Local variables used to reduce repetition 

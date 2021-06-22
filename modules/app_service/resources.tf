@@ -2,7 +2,7 @@
 ##TODO: create AAD Application for auth
 ##TODO: firewall rules by param
 ##TODO: Custom host Name & certificates
- 
+
 #Deployment current public IP
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
@@ -74,7 +74,7 @@ resource "azurerm_app_service" "app" {
       content {
         ip_address = ip_restriction.value
         name       = "FirewallRule-${ip_restriction.value}"
-        action     = "Allow"        
+        action     = "Allow"
         priority   = 100
       }
     }
@@ -94,22 +94,6 @@ resource "azurerm_app_service" "app" {
   }
 
   tags = var.tags
-}
-
-#Set app service firewall rules
-resource "null_resource" "app_firewall" {
-  count = length(var.app_allowed_ips)
-
-  provisioner "local-exec" {
-    command = <<EOT
-
-      $currentIP = ${var.app_allowed_ips[count.index]}
-      Write-Host "Creating app service firewall rule for IP: $currentIP"
-      az webapp config access-restriction add --resource-group ${var.resource_group_name} --name ${var.app_name} --rule-name ${var.app_name}-outbound-$($count) --action Allow --ip-address $($currentIP)
-    EOT 
-
-    interpreter = ["pwsh", "-Command"]
-  }
 }
 
 # Additional slots 
@@ -158,15 +142,15 @@ resource "azurerm_app_service_slot" "app_slot" {
     php_version               = var.app_php_version != "" ? var.app_php_version : null
     python_version            = var.app_python_version != "" ? var.app_python_version : null
     local_mysql_enabled       = var.app_local_mysql_enabled
-    # dynamic "ip_restriction" {
-    #   for_each = local.app_fw_ips
-    #   content {
-    #     ip_address = ip_restriction.value
-    #     name       = "FirewallRule-${ip_restriction.value}"
-    #     action     = "Allow"        
-    #     priority   = 100
-    #   }
-    # }
+    dynamic "ip_restriction" {
+      for_each = local.app_fw_ips
+      content {
+        ip_address = ip_restriction.value
+        name       = "FirewallRule-${ip_restriction.value}"
+        action     = "Allow"
+        priority   = 100
+      }
+    }
   }
 
   # app_settings = {
@@ -185,32 +169,3 @@ resource "azurerm_app_service_slot" "app_slot" {
   tags = var.tags
 
 }
-
-
-# resource "null_resource" "rpa_app_stickyappsetting" {
-#   triggers = {
-#     default_site_hostname = azurerm_app_service.rpa_app.default_site_hostname
-#   }
-
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       az webapp config appsettings set -g ${azurerm_resource_group.deploy.name} -n ${azurerm_app_service.rpa_app.name} --slot-settings DOMAIN_CURRENT_SITE=${azurerm_app_service.rpa_app.default_site_hostname}
-#     EOT 
-
-#     interpreter = ["pwsh", "-Command"]
-#   }
-# }
-# resource "null_resource" "rpa_app_slot_stickyappsetting" {
-#   triggers = {
-#     default_site_hostname = azurerm_app_service_slot.rpa_app_slot.default_site_hostname
-#   }
-
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       az webapp config appsettings set -g ${azurerm_resource_group.deploy.name} -n ${azurerm_app_service.rpa_app.name} --slot rpastage --slot-settings DOMAIN_CURRENT_SITE=${azurerm_app_service_slot.rpa_app_slot.default_site_hostname}
-#     EOT 
-
-#     interpreter = ["pwsh", "-Command"]
-#   }
-# }
-

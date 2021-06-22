@@ -11,10 +11,6 @@ variable "plan_name" {
   type        = string
   description = "(Required) name of the App Service Plan component. Changing this forces a new resource to be created."
 }
-variable "server_admingroup_name" {
-  type        = string
-  description = "(Required) Name of the Azure AD Group for Administrators of the SQL Server."
-}
 
 variable "kv_id" {
   type        = string

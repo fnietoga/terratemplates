@@ -28,7 +28,7 @@ resource "azurerm_key_vault_secret" "output_insights_app_id" {
   key_vault_id = var.kv_id
 }
 resource "azurerm_key_vault_secret" "output_insights_instrumentation_key" {
-  name         = "insights-${azurerm_application_insights.insights.name}-instrumentation_-key"
+  name         = "insights-${azurerm_application_insights.insights.name}-instrumentation-key"
   value        = azurerm_application_insights.insights.instrumentation_key
   key_vault_id = var.kv_id
 } 

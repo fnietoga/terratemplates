@@ -48,3 +48,11 @@ resource "azurerm_storage_table" "sta_tables" {
   name                 = each.value.name
 }
 
+resource "azurerm_storage_queue" "sta_queues" {
+  for_each = { for queue in var.sta_queues : queue.name => queue }
+
+  storage_account_name = azurerm_storage_account.sta.name
+  name                 = each.value.name
+}
+
+

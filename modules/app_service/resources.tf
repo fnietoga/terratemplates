@@ -1,7 +1,3 @@
-##TODO: AppSettings by param (collection)
-##TODO: create AAD Application for auth
-##TODO: Custom host Name & certificates
-
 #Deployment current public IP
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"

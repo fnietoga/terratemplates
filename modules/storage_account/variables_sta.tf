@@ -103,9 +103,9 @@ variable "sta_tables" {
   default     = []
 }
 
-variable "kv_name" {
+variable "kv_id" {
   type = string
-  description = "(Optional) Name of the Key Vault to be used to store deploy sensitive data and outputs"
+  description = "(Optional) ID of the Key Vault to be used to store deploy sensitive data and outputs"
   default = ""
 }
 

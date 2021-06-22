@@ -106,7 +106,7 @@ variable "sta_tables" {
 variable "kv_id" {
   type = string
   description = "(Optional) ID of the Key Vault to be used to store deploy sensitive data and outputs"
-  default = ""
+  default = null
 }
 
 # Local variables used to reduce repetition 

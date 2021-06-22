@@ -54,15 +54,3 @@ resource "azurerm_key_vault_access_policy" "deploy_kv_acl" {
   key_permissions         = each.value.key_permissions
   storage_permissions     = each.value.storage_permissions
 }
-
-#Outputs to KeyVault
-resource "azurerm_key_vault_secret" "output_keyvault_id" {
-  name         = "keyvault-id"
-  value        = azurerm_key_vault.deploy_kv.id
-  key_vault_id = azurerm_key_vault.deploy_kv.id
-}
-resource "azurerm_key_vault_secret" "output_keyvault_url" {
-  name         = "keyvault-url"
-  value        = azurerm_key_vault.deploy_kv.vault_uri
-  key_vault_id = azurerm_key_vault.deploy_kv.id
-}

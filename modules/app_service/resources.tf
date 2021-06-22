@@ -68,8 +68,8 @@ resource "azurerm_app_service" "app" {
     min_tls_version           = "1.2"
     http2_enabled             = var.app_http2_enabled
     use_32_bit_worker_process = var.app_use_32_bit_worker_process
-    php_version               = var.app_php_version
-    python_version            = var.app_python_version
+    php_version               = var.app_php_version != "" ? var.app_php_version : null
+    python_version            = var.app_python_version != "" ? var.app_python_version : null
     local_mysql_enabled       = var.app_local_mysql_enabled
     dynamic "ip_restriction" {
       for_each = local.app_fw_ips
@@ -157,8 +157,8 @@ resource "azurerm_app_service_slot" "app_slot" {
     min_tls_version           = "1.2"
     http2_enabled             = var.app_http2_enabled
     use_32_bit_worker_process = var.app_use_32_bit_worker_process
-    php_version               = var.app_php_version
-    python_version            = var.app_python_version
+    php_version               = var.app_php_version != "" ? var.app_php_version : null
+    python_version            = var.app_python_version != "" ? var.app_python_version : null
     local_mysql_enabled       = var.app_local_mysql_enabled
     # dynamic "ip_restriction" {
     #   for_each = local.app_fw_ips

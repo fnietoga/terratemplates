@@ -1,22 +1,22 @@
-output "server-id" {
+output "server_id" {
   value = azurerm_mssql_server.server.id
 }
-output "server-fqdn" {
+output "server_fqdn" {
   value = azurerm_mssql_server.server.fully_qualified_domain_name
 }
-output "server-hostname" {
+output "server_hostname" {
   value = azurerm_mssql_server.server.name
 }
-output "server-adminusername" {
+output "server_adminusername" {
   value = azurerm_mssql_server.server.administrator_login
 }
-output "server-adminpassword" {
+output "server_adminpassword" {
   value = azurerm_mssql_server.server.administrator_login_password
 }
-output "database-id" {
+output "database_id" {
   value = azurerm_mssql_database.database.id
 }
-output "database-name" {
+output "database_name" {
   value = azurerm_mssql_database.database.name
 }
 

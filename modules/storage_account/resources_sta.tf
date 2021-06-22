@@ -26,24 +26,32 @@ resource "azurerm_storage_account" "sta" {
 }
 
 resource "azurerm_storage_container" "sta_containers" {
-    for_each = { for container in var.sta_containers : container.name => container }
+  for_each = { for container in var.sta_containers : container.name => container }
 
-    storage_account_name = azurerm_storage_account.sta.name
-    name = each.value.name
-    container_access_type = each.value.access_type
+  storage_account_name  = azurerm_storage_account.sta.name
+  name                  = each.value.name
+  container_access_type = each.value.access_type
 }
 
 resource "azurerm_storage_share" "sta_shares" {
-    for_each = { for share in var.sta_shares : share.name => share }
+  for_each = { for share in var.sta_shares : share.name => share }
 
-    storage_account_name = azurerm_storage_account.sta.name
-    name = each.value.name
-    quota = each.value.quota
+  storage_account_name = azurerm_storage_account.sta.name
+  name                 = each.value.name
+  quota                = each.value.quota
 }
 
 resource "azurerm_storage_table" "sta_tables" {
-    for_each = { for table in var.sta_tables : table.name => table }
+  for_each = { for table in var.sta_tables : table.name => table }
 
-    storage_account_name = azurerm_storage_account.sta.name
-    name = each.value.name
+  storage_account_name = azurerm_storage_account.sta.name
+  name                 = each.value.name
+}
+
+#Outputs to KeyVault
+resource "azurerm_key_vault_secret" "output_sta_primary_blob_endpoint" {
+  count        = var.kv_name != "" ? 1 : 0
+  name         = "database-server-fqdn"
+  value        = azurerm_storage_account.sta.primary_blob_endpoint
+  key_vault_id = azurerm_key_vault.deploy_kv.id
 }

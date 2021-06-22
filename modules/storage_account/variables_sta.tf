@@ -67,7 +67,7 @@ variable "sta_access_tier" {
 
 variable "sta_allow_blob_public_access" {
   type        = bool
-  description = "Allow or disallow public access to all blobs or containers in the storage account. Defaults to false."
+  description = "(Optional) Allow or disallow public access to all blobs or containers in the storage account. Defaults to false."
   default     = false
 }
 
@@ -82,7 +82,7 @@ variable "sta_containers" {
     name        = string
     access_type = optional(string)
   }))
-  description = "Object collection with information for containers to be created in the deployed Storage Account."
+  description = "(Optional) Object collection with information for containers to be created in the deployed Storage Account."
   default     = []
 }
 
@@ -91,7 +91,7 @@ variable "sta_shares" {
     name  = string
     quota = optional(number)
   }))
-  description = "Object collection with information for shares to be created in the deployed Storage Account."
+  description = "(Optional) Object collection with information for shares to be created in the deployed Storage Account."
   default     = []
 }
 
@@ -99,8 +99,14 @@ variable "sta_tables" {
   type = list(object({
     name = string
   }))
-  description = "Object collection with information for tables to be created in the deployed Storage Account."
+  description = "(Optional) Object collection with information for tables to be created in the deployed Storage Account."
   default     = []
+}
+
+variable "kv_name" {
+  type = string
+  description = "(Optional) Name of the Key Vault to be used to store deploy sensitive data and outputs"
+  default = ""
 }
 
 # Local variables used to reduce repetition 

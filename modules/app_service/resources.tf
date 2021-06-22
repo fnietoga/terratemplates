@@ -2,9 +2,7 @@
 ##TODO: create AAD Application for auth
 ##TODO: firewall rules by param
 ##TODO: Custom host Name & certificates
-##TODO: outbound IPs -> SQL Server
-
-
+ 
 #Deployment current public IP
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"

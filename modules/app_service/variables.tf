@@ -139,7 +139,7 @@ variable "app_php_version" {
   type = string
   description = "(Optional) The version of PHP to use in this App Service. Possible values are 5.5, 5.6, 7.0, 7.1, 7.2, 7.3 and 7.4."
   validation {
-    condition     = contains(["5.5","5.6","7.0","7.1","7.2","7.3","7.4"], var.app_php_version)
+    condition     = contains(["5.5","5.6","7.0","7.1","7.2","7.3","7.4", ""], var.app_php_version)
     error_message = "The version of PHP specified must be one of the allowed values (5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4)."
   }
   default = ""
@@ -149,14 +149,14 @@ variable "app_python_version" {
    type = string
   description = "(Optional) The version of Python to use in this App Service. Possible values are 2.7 and 3."
   validation {
-    condition     = contains(["2.7", "3"], var.app_python_version)
+    condition     = contains(["2.7", "3", ""], var.app_python_version)
     error_message = "The version of PHP specified must be one of the allowed values (2.7, 3)."
   }
   default = ""
 }
 variable "app_local_mysql_enabled" {
   type        = bool
-  description = "(Optional)  Is 'MySQL In App' Enabled? This runs a local MySQL instance with your app and shares resources from the App Service plan. Defaults to false."
+  description = "(Optional) Is 'MySQL In App' Enabled? This runs a local MySQL instance with your app and shares resources from the App Service plan. Defaults to false."
   default     = false
 }
 

@@ -18,7 +18,7 @@ variable "azure_location" {
   description = "(Optional) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created. Defaults to westeurope."
   default     = "westeurope"
   validation {
-    condition     = index(["westeurope", "northeurope"], var.azure_location) == 0
+    condition     = contains(["westeurope", "northeurope"], var.azure_location)
     error_message = "The location specified must be one of the allowed values (westeurope, northeurope)."
   }
 }
@@ -34,7 +34,7 @@ variable "kv_sku_name" {
   description = "(Optional) The Name of the SKU used for this Key Vault. Possible values are standard and premium. Defaults to standard."
   default     = "standard"
   validation {
-    condition     = index(["standard", "premium"], var.kv_sku_name) == 0
+    condition     = contains(["standard", "premium"], var.kv_sku_name)
     error_message = "The Name of the SKU specified must be one of the allowed values (standard, premium)."
   }
 }

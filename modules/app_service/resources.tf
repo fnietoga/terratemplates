@@ -1,3 +1,6 @@
+#Deployment current context
+data "azurerm_client_config" "current" {
+}
 #Deployment current public IP
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
@@ -5,13 +8,13 @@ data "http" "myip" {
 
 # Web app plan
 resource "azurerm_app_service_plan" "app_plan" {
-  name                         = var.plan_name
-  location                     = var.azure_location
-  resource_group_name          = var.resource_group_name
-  kind                         = var.plan_kind
-  reserved                     = var.plan_kind == "Linux" ? true : var.plan_reserved
+  name                = var.plan_name
+  location            = var.azure_location
+  resource_group_name = var.resource_group_name
+  kind                = var.plan_kind
+  reserved            = var.plan_kind == "Linux" ? true : var.plan_reserved
   #maximum_elastic_worker_count = 2
-  per_site_scaling             = var.plan_per_site_scaling
+  per_site_scaling = var.plan_per_site_scaling
 
   sku {
     tier = var.plan_sku_tier
@@ -37,22 +40,21 @@ resource "azurerm_app_service" "app" {
     type = "SystemAssigned"
   }
 
-  # auth_settings {
-  #   enabled          = var.web_clientId != "" ? true : false
-  #   default_provider = var.web_clientId != "" ? "AzureActiveDirectory" : null
-  #   #runtime_version               = var.web_clientId != "" ? "v2" : null
-  #   token_store_enabled           = var.web_clientId != "" ? true : null
-  #   issuer                        = var.web_clientId != "" ? "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/v2.0" : null
-  #   unauthenticated_client_action = var.web_clientId != "" ? "RedirectToLoginPage" : null
+  auth_settings {
+    enabled          = var.ad_app_id ? true : false
+    default_provider = var.ad_app_id ? "AzureActiveDirectory" : null
+    #runtime_version               = var.ad_app_id != "" ? "v2" : null
+    token_store_enabled           = var.ad_app_id ? true : null
+    issuer                        = var.ad_app_id ? "https://sts.windows.net/${data.azurerm_client_config.current.tenant_id}/v2.0" : null
+    unauthenticated_client_action = var.ad_app_id ? "RedirectToLoginPage" : null
 
-  #   dynamic "active_directory" {
-  #     for_each = var.web_clientId != "" ? [1] : []
-  #     content {
-  #       client_id = var.web_clientId
-
-  #     }
-  #   }
-  # }
+    dynamic "active_directory" {
+      for_each = var.ad_app_id ? [1] : []
+      content {
+        client_id = var.ad_app_id
+      }
+    }
+  }
 
   site_config {
     dotnet_framework_version  = var.app_dotnet_framework_version
@@ -109,21 +111,21 @@ resource "azurerm_app_service_slot" "app_slot" {
   }
 
 
-  #   # auth_settings {
-  #   #   enabled          = var.web_clientId != "" ? true : false
-  #   #   default_provider = var.web_clientId != "" ? "AzureActiveDirectory" : null
-  #   #   #runtime_version               = var.web_clientId != "" ? "v2" : null
-  #   #   token_store_enabled           = var.web_clientId != "" ? true : null
-  #   #   unauthenticated_client_action = var.web_clientId != "" ? "RedirectToLoginPage" : null
+  auth_settings {
+    enabled          = var.ad_app_id ? true : false
+    default_provider = var.ad_app_id ? "AzureActiveDirectory" : null
+    #runtime_version               = var.ad_app_id ? "v2" : null
+    token_store_enabled           = var.ad_app_id ? true : null
+    unauthenticated_client_action = var.ad_app_id ? "RedirectToLoginPage" : null
 
-  #   #   dynamic "active_directory" {
-  #   #     for_each = var.web_clientId != "" ? [1] : []
-  #   #     content {
-  #   #       client_id = var.web_clientId
+    dynamic "active_directory" {
+      for_each = var.ad_app_id ? [1] : []
+      content {
+        client_id = var.ad_app_id
 
-  #   #     }
-  #   #   }
-  #   # }
+      }
+    }
+  }
 
   site_config {
     dotnet_framework_version  = var.app_dotnet_framework_version
@@ -160,3 +162,4 @@ resource "azurerm_app_service_slot" "app_slot" {
   tags = var.tags
 
 }
+

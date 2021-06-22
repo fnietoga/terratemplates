@@ -1,14 +1,14 @@
 ####REQUIRED Input Variables
 variable "resource_group_name" {
   type        = string
-  description = "(Required) The name of the resource group in which to create the Key Vault. Changing this forces a new resource to be created."
+  description = "(Required) The name of the resource group in which to create the Resource. Changing this forces a new resource to be created."
 }
 variable "kv_name" {
   type        = string
   description = " (Required) Specifies the name of the Key Vault. Changing this forces a new resource to be created."
   validation {
     condition = can(regex("^[a-zA-Z]{1}[a-zA-Z0-9-]{2,23}$",var.kv_name))
-    error_message = "Vault name must only contain alphanumeric characters and dashes and cannot start with a number, and must be between 3-24 alphanumeric characters."
+    error_message = "Vault name must only contain alphanumeric characters and dashes and cannot start with a number, and must be between 3 and 24 alphanumeric characters."
   }
 }
 
@@ -21,14 +21,13 @@ variable "azure_location" {
     condition     = index(["westeurope", "northeurope"], var.azure_location) == 0
     error_message = "The location specified must be one of the allowed values (westeurope, northeurope)."
   }
-} 
+}
 
 variable "tags" {
   type = map
   description = "(Optional) A mapping of tags which should be assigned to the Resource Group."
   default= {}
 } 
-
 
 variable "kv_sku_name" {
   type        = string
@@ -97,8 +96,7 @@ variable "kv_access_policies" {
 
 # Local variables used to reduce repetition 
 locals {
-  #kv_name = "${lower(var.app_name)}-kv-${lower(var.environment)}"
-  kv_always_deploy_ips = [
+  kv_deploy_ips = [
     "${chomp(data.http.myip.body)}/32" != "" ? "${chomp(data.http.myip.body)}/32" : null
   ]
 }

@@ -6,7 +6,7 @@ data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
 }
 
-# Key Vault to store deploy sensitive and iac outputs
+# Deploy the Key Vault 
 resource "azurerm_key_vault" "deploy_kv" {
   name                = var.kv_name
   location            = var.azure_location
@@ -21,6 +21,7 @@ resource "azurerm_key_vault" "deploy_kv" {
   purge_protection_enabled        = var.kv_purge_protection_enabled
   soft_delete_retention_days      = var.kv_soft_delete_retention_days
 
+  ##Set access policies for deployment credentials to ensure future modifications
   access_policy {
     tenant_id               = data.azurerm_client_config.current.tenant_id
     object_id               = data.azurerm_client_config.current.object_id
@@ -30,17 +31,18 @@ resource "azurerm_key_vault" "deploy_kv" {
     storage_permissions     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
   }
 
+  ##Enable firewall and add deployment IP to ensure future modifications
   network_acls {
     bypass         = "None"
     default_action = "Deny"
-    ip_rules       = local.kv_always_deploy_ips
+    ip_rules       = local.kv_deploy_ips
   }
 
   tags = var.tags
 
 }
 
-
+#Create requested access policies
 resource "azurerm_key_vault_access_policy" "deploy_kv_acl" {
   for_each = { for acl in var.kv_access_policies : acl.object_id => acl }
 

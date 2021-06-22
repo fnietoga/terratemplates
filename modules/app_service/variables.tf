@@ -172,5 +172,5 @@ variable "app_allowed_ips" {
 }
 # Local variables used to reduce repetition 
 locals {
-  app_fw_ips = concat(var.app_allowed_ips, ["${chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null}"]) 
+  app_fw_ips = concat(var.app_allowed_ips, ["${chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body)/32 : null}"]) 
 }

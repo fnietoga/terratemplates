@@ -1,93 +1,81 @@
-# output "server-id" {
-#   value = azurerm_mssql_server.server.id
-# }
-# output "server-fqdn" {
-#   value = azurerm_mssql_server.server.fully_qualified_domain_name
-# }
-# output "server-hostname" {
-#   value = azurerm_mssql_server.server.name
-# }
-# output "server-adminusername" {
-#   value = azurerm_mssql_server.server.administrator_login
-# }
-# output "server-adminpassword" {
-#   value = azurerm_mssql_server.server.administrator_login_password
-# }
-# output "database-id" {
-#   value = azurerm_mssql_database.database.id
-# }
-# output "database-name" {
-#   value = azurerm_mssql_database.database.name
-# }
-
+output "plan_id" {
+  value = azurerm_app_service_plan.app_plan.id
+}
+output "app_id" {
+  value = azurerm_app_service.app.id
+}
+output "app_name" {
+  value = azurerm_app_service.app.name
+}
+output "app_custom_domain_verification_id" {
+  value =  azurerm_app_service.app.custom_domain_verification_id
+}
+output "app_default_site_hostname" {
+  value =  azurerm_app_service.app.default_site_hostname
+}
+output "app_outbound_ip_addresses" {
+  value =  azurerm_app_service.app.outbound_ip_addresses
+}
+output "app_outbound_ip_address_list" {
+  value =  azurerm_app_service.app.outbound_ip_address_list
+}
+output "app_identity_principal_id" {
+  value =  azurerm_app_service.app.identity[0].principal_id
+}  
 
 # #Outputs to KeyVault
-# resource "azurerm_key_vault_secret" "output_server_id" {
-#   name         = "db-server-${azurerm_mssql_server.server.name}-id"
-#   value        = azurerm_mssql_server.server.id
-#   key_vault_id = var.kv_id
-# }
-# resource "azurerm_key_vault_secret" "output_server_fqdn" {
-#   name         = "db-server-${azurerm_mssql_server.server.name}-fqdn"
-#   value        = azurerm_mssql_server.server.fully_qualified_domain_name
-#   key_vault_id = var.kv_id
-# }
-# resource "azurerm_key_vault_secret" "output_server_hostname" {
-#   name         = "db-server-${azurerm_mssql_server.server.name}-hostname"
-#   value        = azurerm_mssql_server.server.name
-#   key_vault_id = var.kv_id
-# }
-# resource "azurerm_key_vault_secret" "output_server_adminusername" {
-#   name         = "db-server-${azurerm_mssql_server.server.name}-adminusername"
-#   value        = azurerm_mssql_server.server.administrator_login
-#   key_vault_id = var.kv_id
-# }
-# resource "azurerm_key_vault_secret" "output_server_adminpassword" {
-#   name         = "db-server-${azurerm_mssql_server.server.name}-adminpassword"
-#   value        = azurerm_mssql_server.server.administrator_login_password
-#   key_vault_id = var.kv_id
-# }
-
-# resource "azurerm_key_vault_secret" "output_database_id" {
-#   name         = "db-database-${azurerm_mssql_database.database.name}-id"
-#   value        = azurerm_mssql_database.database.id
-#   key_vault_id = var.kv_id
-# }
-# resource "azurerm_key_vault_secret" "output_database_name" {
-#   name         = "db-database-${azurerm_mssql_database.database.name}-name"
-#   value        = azurerm_mssql_database.database.name
-#   key_vault_id = var.kv_id
-# }
+resource "azurerm_key_vault_secret" "output_plan_id" {
+  name         = "appplan-${azurerm_app_service_plan.app_plan.name}-id"
+  value        = azurerm_app_service_plan.app_plan.id
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_id" {
+  name         = "appservice-${azurerm_app_service.app.name}-id"
+  value        = azurerm_app_service.app.id
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_name" {
+  name         = "appservice-${azurerm_app_service.app.name}-name"
+  value        = azurerm_app_service.app.name
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_custom_domain_verification_id" {
+  name         = "appservice-${azurerm_app_service.app.name}-custom-domain-verification-id"
+  value        = azurerm_app_service.app.custom_domain_verification_id
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_default_site_hostname" {
+  name         = "appservice-${azurerm_app_service.app.name}-default-site-hostname"
+  value        = azurerm_app_service.app.default_site_hostname
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_outbound_ip_addresses" {
+  name         = "appservice-${azurerm_app_service.app.name}-outbound-ip-addresses"
+  value        = azurerm_app_service.app.outbound_ip_addresses
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_app_outbound_ip_address_list" {
+  name         = "appservice-${azurerm_app_service.app.name}-outbound-ip-address-list"
+  value        = azurerm_app_service.app.outbound_ip_address_list
+  key_vault_id = var.kv_id
+} 
+resource "azurerm_key_vault_secret" "output_app_identity_principal_id" {
+  name         = "appservice-${azurerm_app_service.app.name}-identity-principal-id"
+  value        = azurerm_app_service.app.identity[0].principal_id
+  key_vault_id = var.kv_id
+}
  
-
-# #Outputs to KeyVault
-# resource "azurerm_key_vault_secret" "appservice_name" {
-#   name         = "appservice-name"
-#   value        = azurerm_app_service.rpa_app.name
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
-# resource "azurerm_key_vault_secret" "appservice_productionSlotName" {
-#   name         = "appservice-productionSlotName"
-#   value        = "production"
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
-# resource "azurerm_key_vault_secret" "appservice_productionSlotHostName" {
-#   name         = "appservice-productionSlotHostName"
-#   value        = "https://${azurerm_app_service.rpa_app.default_site_hostname}"
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
-# resource "azurerm_key_vault_secret" "appservice_stageSlotName" {
-#   name         = "appservice-stageSlotName"
-#   value        = azurerm_app_service_slot.rpa_app_slot.name
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
-# resource "azurerm_key_vault_secret" "appservice_stageSlotHostName" {
-#   name         = "appservice-stageSlotHostName"
-#   value        = "https://${azurerm_app_service_slot.rpa_app_slot.default_site_hostname}"
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
-# resource "azurerm_key_vault_secret" "appservice_outboundips" {
-#   name         = "appservice-outboundips"
-#   value        = azurerm_app_service.rpa_app.outbound_ip_addresses
-#   key_vault_id = azurerm_key_vault.deploy_kv.id
-# }
+resource "azurerm_key_vault_secret" "output_slots_name" {
+  count = length(var.app_slots_names)
+  
+  name         = "appslot-${azurerm_app_service_slot.app_slot[count.index]}-name"
+  value        = azurerm_app_service_slot.app_slot[count.index].name
+  key_vault_id =  var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_slots_hostname" {
+  count = length(var.app_slots_names)
+  
+  name         = "appslot-${azurerm_app_service_slot.app_slot[count.index]}-hostname"
+  value        = azurerm_app_service_slot.app_slot[count.index].default_site_hostname
+  key_vault_id =  var.kv_id
+}

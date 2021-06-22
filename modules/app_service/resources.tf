@@ -1,6 +1,5 @@
 ##TODO: AppSettings by param (collection)
 ##TODO: create AAD Application for auth
-##TODO: firewall rules by param
 ##TODO: Custom host Name & certificates
 
 #Deployment current public IP

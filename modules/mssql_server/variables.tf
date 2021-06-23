@@ -85,6 +85,6 @@ variable "database_max_size_gb" {
 # Local variables used to reduce repetition 
 locals {
   server_deploy_ips = [
-    "${chomp(data.http.myip.body)}" != "" ? "${chomp(data.http.myip.body)}" : null
+    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null
   ]
 }

@@ -119,6 +119,6 @@ variable "sta_queues" {
 # Local variables used to reduce repetition 
 locals {
   sta_deploy_ips = [
-    "${chomp(data.http.myip.body)}" != "" ? "${chomp(data.http.myip.body)}" : null
+    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null
   ]
 }

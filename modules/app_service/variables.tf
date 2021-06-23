@@ -136,17 +136,17 @@ variable "app_use_32_bit_worker_process" {
   default     = false
 }
 variable "app_php_version" {
-  type = string
+  type        = string
   description = "(Optional) The version of PHP to use in this App Service. Possible values are 5.5, 5.6, 7.0, 7.1, 7.2, 7.3 and 7.4."
   validation {
-    condition     = contains(["5.5","5.6","7.0","7.1","7.2","7.3","7.4", ""], var.app_php_version)
+    condition     = contains(["5.5", "5.6", "7.0", "7.1", "7.2", "7.3", "7.4", ""], var.app_php_version)
     error_message = "The version of PHP specified must be one of the allowed values (5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4)."
   }
   default = ""
 }
 
 variable "app_python_version" {
-   type = string
+  type        = string
   description = "(Optional) The version of Python to use in this App Service. Possible values are 2.7 and 3."
   validation {
     condition     = contains(["2.7", "3", ""], var.app_python_version)
@@ -161,9 +161,9 @@ variable "app_local_mysql_enabled" {
 }
 
 variable "app_slots_names" {
-  type = list(string)
+  type        = list(string)
   description = "(Optional) List with names for addicional slots to be added to the App Service deployed, with same configuration as the main slot."
-  default = []
+  default     = []
 }
 variable "app_allowed_ips" {
   type        = list(string)
@@ -178,24 +178,24 @@ variable "app_settings" {
 }
 
 variable "ad_app_id" {
-  type = string
+  type        = string
   description = "(Optional) Application Id of the Azure AD Application registered for App Service authorization."
-  default = ""
+  default     = ""
 }
 
 variable "key_vault_secret_id" {
-  type = string
+  type        = string
   description = "(Optional) The ID of the Key Vault secret for to the custom hostname certificate. Changing this forces a new resource to be created."
-  default = ""
+  default     = ""
 }
 
 variable "custom_hostname" {
-  type = string
+  type        = string
   description = "(Optional) The hostname to be assigned to the App Service. A CNAME needs to be configured from this Hostname to the Azure Website - otherwise Azure will reject the Hostname Binding."
-  default = ""
+  default     = ""
 }
 
 # Local variables used to reduce repetition 
 locals {
-  app_fw_ips = concat(var.app_allowed_ips, ["${chomp(data.http.myip.body) != "" ? format("%s/%s",chomp(data.http.myip.body),"32") : null}"]) 
+  app_fw_ips = concat(var.app_allowed_ips, [ chomp(data.http.myip.body) != "" ? format("%s/%s", chomp(data.http.myip.body), "32") : null ])
 }

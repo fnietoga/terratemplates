@@ -197,5 +197,9 @@ variable "custom_hostname" {
 
 # Local variables used to reduce repetition 
 locals {
-  app_fw_ips = concat(var.app_allowed_ips, [ chomp(data.http.myip.body) != "" ? format("%s/%s", chomp(data.http.myip.body), "32") : null ])
+  app_fw_ips = concat(var.app_allowed_ips, [ 
+      chomp(data.http.myip.body) != "" ? format("%s/%s", chomp(data.http.myip.body), "32") : null,
+      "40.74.28.0/23" #AzureDevOps.WestEurope
+    ]
+  )
 }

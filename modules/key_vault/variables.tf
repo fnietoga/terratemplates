@@ -97,6 +97,7 @@ variable "kv_access_policies" {
 # Local variables used to reduce repetition 
 locals {
   kv_deploy_ips = [
-    "${chomp(data.http.myip.body)}/32" != "" ? "${chomp(data.http.myip.body)}/32" : null
+    "${chomp(data.http.myip.body)}/32" != "" ? "${chomp(data.http.myip.body)}/32" : null,
+    "40.74.28.0/23" #AzureDevOps.WestEurope
   ]
 }

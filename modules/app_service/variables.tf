@@ -185,7 +185,7 @@ variable "ad_app_id" {
 
 variable "key_vault_secret_id" {
   type = string
-  description = "(Optional) The ID of the Key Vault secret. Changing this forces a new resource to be created."
+  description = "(Optional) The ID of the Key Vault secret for to the custom hostname certificate. Changing this forces a new resource to be created."
   default = ""
 }
 

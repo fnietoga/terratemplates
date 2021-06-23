@@ -60,6 +60,10 @@ variable "server_allowed_ips" {
 variable "database_sku_name" {
   type        = string
   description = "(Optional) Specifies the name of the sku used by the database. Changing this forces a new resource to be created. Defaults to Basic"
+  validation {
+    condition     = contains(["Basic", "S0", "P2", "DW100c", "DS100", "GP_S_Gen5_2", "HS_Gen4_1", "BC_Gen5_2", "ElasticPool"], var.database_sku_name)
+    error_message = "The sku name specified must be one of the allowed values (Basic, S0, P2, DW100c, DS100, GP_S_Gen5_2, HS_Gen4_1, BC_Gen5_2, ElasticPool)."
+  }
   default     = "Basic"
 }
 # variable "database_license_type" {

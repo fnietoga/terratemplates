@@ -10,6 +10,9 @@ output "app_id" {
 output "instrumentation_key" {
   value = azurerm_application_insights.insights.instrumentation_key
 }
+output "connection_string" {
+  value = azurerm_application_insights.insights.connection_string
+}
 
 # #Outputs to KeyVault
 resource "azurerm_key_vault_secret" "output_insights_id" {
@@ -30,5 +33,10 @@ resource "azurerm_key_vault_secret" "output_insights_app_id" {
 resource "azurerm_key_vault_secret" "output_insights_instrumentation_key" {
   name         = "insights-${azurerm_application_insights.insights.name}-instrumentation-key"
   value        = azurerm_application_insights.insights.instrumentation_key
+  key_vault_id = var.kv_id
+}
+resource "azurerm_key_vault_secret" "output_insights_connection_string" {
+  name         = "insights-${azurerm_application_insights.insights.name}-connection-string"
+  value        = azurerm_application_insights.insights.connection_string
   key_vault_id = var.kv_id
 } 

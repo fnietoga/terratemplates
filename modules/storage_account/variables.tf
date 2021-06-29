@@ -128,5 +128,5 @@ locals {
     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
     "40.74.28.0/23", #AzureDevOps.WestEurope
     "137.135.128.0/17" #AzureCloud.northeurope
-  ]
+  ])
 }

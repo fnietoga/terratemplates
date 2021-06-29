@@ -16,7 +16,8 @@ variable "azure_location" {
 
 # Key Vault to store deploy sensitive and iac outputs
 module "key_vault" {
-  source = "git::https://github.com/fnietoga/terratemplates.git//modules/key_vault"
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/key_vault"
+  source = "../modules/key_vault"
 
   resource_group_name = var.resource_group_name
   azure_location      = var.azure_location
@@ -37,7 +38,8 @@ module "key_vault" {
 }
 
 module "storage_account" {
-  source = "git::https://github.com/fnietoga/terratemplates.git//modules/storage_account"
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/storage_account"
+  source = "../modules/storage_account"
 
   resource_group_name          = var.resource_group_name
   azure_location               = var.azure_location
@@ -60,7 +62,8 @@ module "storage_account" {
 
 
 module "mssql_server" {
-  source = "git::https://github.com/fnietoga/terratemplates.git//modules/mssql_server"
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/mssql_server"
+  source = "../modules/mssql_server"
 
   resource_group_name    = var.resource_group_name
   azure_location         = var.azure_location
@@ -82,7 +85,8 @@ module "mssql_server" {
 }
 
 module "app_service" {
-  source = "git::https://github.com/fnietoga/terratemplates.git//modules/app_service"
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/app_service"
+  source = "../modules/app_service"
 
   resource_group_name = var.resource_group_name
   azure_location      = var.azure_location
@@ -107,7 +111,8 @@ module "app_service" {
 }
 
 module "application_insights" {
-  source = "git::https://github.com/fnietoga/terratemplates.git//modules/application_insights"
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/application_insights"
+  source = "../modules/application_insights"
 
   resource_group_name  = var.resource_group_name
   azure_location       = var.azure_location

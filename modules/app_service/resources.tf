@@ -68,7 +68,7 @@ resource "azurerm_app_service" "app" {
     dynamic "ip_restriction" {
       for_each = local.app_fw_ips
       content {
-        ip_address = ip_restriction.value
+        ip_address = length(regex(ip_restriction.value,local.cidr_notation_regex)) > 0 ? ip_restriction.value : concat(ip_restriction.value,"/32") 
         name       = "FirewallRule-${ip_restriction.value}"
         action     = "Allow"
         priority   = 100

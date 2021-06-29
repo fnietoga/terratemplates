@@ -68,7 +68,7 @@ resource "azurerm_app_service" "app" {
     dynamic "ip_restriction" {
       for_each = local.app_fw_ips
       content {
-        ip_address = length(regexall(local.cidr_notation_regex, ip_restriction.value)) > 0 ? ip_restriction.value : "${ip_restriction.value}/32"
+        ip_address = length(split("/", ip_restriction.value)) > 1 ? ip_restriction.value : "${ip_restriction.value}/32"
         name       = "FirewallRule-${ip_restriction.value}"
         action     = "Allow"
         priority   = 100
@@ -137,7 +137,7 @@ resource "azurerm_app_service_slot" "app_slot" {
     dynamic "ip_restriction" {
       for_each = local.app_fw_ips
       content {
-        ip_address = ip_restriction.value
+        ip_address = length(split("/", ip_restriction.value)) > 1 ? ip_restriction.value : "${ip_restriction.value}/32"
         name       = "FirewallRule-${ip_restriction.value}"
         action     = "Allow"
         priority   = 100
@@ -183,7 +183,7 @@ resource "azurerm_app_service_custom_hostname_binding" "app_binding" {
   }
 }
 
-resource  "azurerm_app_service_certificate_binding" "app_certificate_binding" {
+resource "azurerm_app_service_certificate_binding" "app_certificate_binding" {
   count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
 
   hostname_binding_id = azurerm_app_service_custom_hostname_binding.app_binding[0].id

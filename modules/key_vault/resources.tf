@@ -35,7 +35,7 @@ resource "azurerm_key_vault" "deploy_kv" {
   network_acls {
     bypass         = "None"
     default_action = "Deny"
-    ip_rules       = local.kv_deploy_ips
+    ip_rules       = local.kv_fw_ips
   }
 
   tags = var.tags

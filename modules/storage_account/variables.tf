@@ -120,6 +120,7 @@ variable "sta_queues" {
 locals {
   sta_deploy_ips = [
     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
-    "40.74.28.0/23" #AzureDevOps.WestEurope
+    "40.74.28.0/23", #AzureDevOps.WestEurope
+    "137.135.128.0/17" #AzureCloud.northeurope
   ]
 }

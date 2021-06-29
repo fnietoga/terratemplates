@@ -94,10 +94,17 @@ variable "kv_access_policies" {
   default = []
 }
 
+variable "kv_allowed_ips" {
+  type        = list(string)
+  description = "(Optional) List of IP Addresses to allow through the Key Vault firewall."
+  default     = []
+}
+
 # Local variables used to reduce repetition 
 locals {
-  kv_deploy_ips = [
-    "${chomp(data.http.myip.body)}/32" != "" ? "${chomp(data.http.myip.body)}/32" : null,
-    "40.74.28.0/23" #AzureDevOps.WestEurope
-  ]
+  kv_fw_ips = concat(var.kv_allowed_ips, [
+     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
+    "40.74.28.0/23", #AzureDevOps.WestEurope
+    "137.135.128.0/17" #AzureCloud.northeurope
+  ])
 }

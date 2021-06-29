@@ -62,12 +62,8 @@ variable "disable_ip_masking" {
   description = " (Optional) By default the real client ip is masked as 0.0.0.0 in the logs. Use this argument to disable masking and log the real client ip. Defaults to false."
   default     = false
 }
-# variable "insights_allowed_ips" {
-#   type        = list(string)
-#   description = "(Optional) List of IP Addresses to allow through the App Service firewall."
-#   default     = []
-# }
+
+
 # Local variables used to reduce repetition 
 locals {
-  #insights_fw_ips = concat(var.insights_allowed_ips, ["${chomp(data.http.myip.body) != "" ? format("%s/%s",chomp(data.http.myip.body),"32") : null}"]) 
 }

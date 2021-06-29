@@ -19,7 +19,7 @@ resource "azurerm_storage_account" "sta" {
   network_rules {
     default_action = "Deny"
     bypass         = ["None"] #["Logging","Metrics"]
-    ip_rules       = local.sta_deploy_ips
+    ip_rules       = local.sta_fw_ips
   }
 
   tags = var.tags

@@ -66,11 +66,6 @@ variable "database_sku_name" {
   }
   default     = "Basic"
 }
-# variable "database_license_type" {
-#   type        = string
-#   description = "(Optional) Specifies the license type applied to this database. Possible values are LicenseIncluded and BasePrice. Defaults to LicenseIncluded."
-#   default     = "LicenseIncluded"
-# }
 variable "database_collation" {
   type        = string
   description = "(Optional) Specifies the collation of the database. Changing this forces a new resource to be created. Defaults to SQL_Latin1_General_CP1_CI_AS."

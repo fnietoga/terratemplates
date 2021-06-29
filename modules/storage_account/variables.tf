@@ -82,6 +82,12 @@ variable "sta_is_hns_enabled" {
   default     = false
 }
 
+variable "sta_allowed_ips" {
+  type        = list(string)
+  description = "(Optional) List of IP Addresses to allow through the Storage Account firewall."
+  default     = []
+}
+
 variable "sta_containers" {
   type = list(object({
     name        = string
@@ -118,7 +124,7 @@ variable "sta_queues" {
 
 # Local variables used to reduce repetition 
 locals {
-  sta_deploy_ips = [
+  sta_fw_ips = concat(var.sta_allowed_ips,[
     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
     "40.74.28.0/23", #AzureDevOps.WestEurope
     "137.135.128.0/17" #AzureCloud.northeurope

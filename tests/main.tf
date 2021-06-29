@@ -33,6 +33,7 @@ module "key_vault" {
       secret_permissions = ["get", "list", "set"]
     }
   ]
+  kv_allowed_ips = ["13.95.137.239"]
 }
 
 module "storage_account" {

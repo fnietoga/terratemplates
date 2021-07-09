@@ -107,4 +107,12 @@ locals {
     "40.74.28.0/23", #AzureDevOps.WestEurope
     "137.135.128.0/17" #AzureCloud.northeurope
   ])
+  kv_access_policies = [var.kv_access_policies, {
+    "tenant_id"               = data.azurerm_client_config.current.tenant_id
+    "object_id"               = data.azurerm_client_config.current.object_id
+    "key_permissions"         = ["get", "list", "create", "update", "verify", "delete", "purge"]
+    "certificate_permissions" = ["get", "list", "create", "update", "delete", "purge", "recover"]
+    "secret_permissions"      = ["get", "list", "set", "delete", "purge", "recover", "backup", "restore"]
+    "storage_permissions"     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
+  }]
 }

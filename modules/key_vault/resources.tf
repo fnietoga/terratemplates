@@ -20,17 +20,7 @@ resource "azurerm_key_vault" "deploy_kv" {
   enable_rbac_authorization       = var.kv_enable_rbac_authorization
   purge_protection_enabled        = var.kv_purge_protection_enabled
   soft_delete_retention_days      = var.kv_soft_delete_retention_days
-
-  ##Set access policies for deployment credentials to ensure future modifications
-  access_policy {
-    tenant_id               = data.azurerm_client_config.current.tenant_id
-    object_id               = data.azurerm_client_config.current.object_id
-    key_permissions         = ["get", "list", "create", "update", "verify", "delete", "purge"]
-    certificate_permissions = ["get", "list", "create", "update", "delete", "purge", "recover"]
-    secret_permissions      = ["get", "list", "set", "delete", "purge", "recover", "backup", "restore"]
-    storage_permissions     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
-  }
-
+ 
   ##Enable firewall and add deployment IP to ensure future modifications
   network_acls {
     bypass         = "None"
@@ -43,9 +33,8 @@ resource "azurerm_key_vault" "deploy_kv" {
 }
 
 #Create requested access policies
-resource "azurerm_key_vault_access_policy" "deploy_kv_acl" {
-  #for_each = { for acl in var.kv_access_policies : acl.object_id => acl }
-  for_each = var.kv_access_policies
+resource "azurerm_key_vault_access_policy" "kv_acl" {
+  for_each = { for acl in var.kv_access_policies : acl.object_id => acl }
 
   key_vault_id            = azurerm_key_vault.deploy_kv.id
   tenant_id               = data.azurerm_client_config.current.tenant_id

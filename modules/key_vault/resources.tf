@@ -44,7 +44,8 @@ resource "azurerm_key_vault" "deploy_kv" {
 
 #Create requested access policies
 resource "azurerm_key_vault_access_policy" "deploy_kv_acl" {
-  for_each = { for acl in var.kv_access_policies : acl.object_id => acl }
+  #for_each = { for acl in var.kv_access_policies : acl.object_id => acl }
+  for_each = var.kv_access_policies
 
   key_vault_id            = azurerm_key_vault.deploy_kv.id
   tenant_id               = data.azurerm_client_config.current.tenant_id

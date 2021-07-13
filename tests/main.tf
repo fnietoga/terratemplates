@@ -128,7 +128,7 @@ module "application_insights" {
   kv_id = module.key_vault.id
 
 }
- 
+
 resource "null_resource" "app_service_ips_sql_firewall" {
   triggers = {
     outbound_ip_addresses = module.app_service.app_outbound_ip_addresses
@@ -147,5 +147,29 @@ resource "null_resource" "app_service_ips_sql_firewall" {
     EOT 
 
     interpreter = ["pwsh", "-Command"]
+  }
+}
+
+
+module "service_bus" {
+  #source = "git::https://github.com/fnietoga/terratemplates.git//modules/service_bus"
+  source = "../modules/service_bus"
+
+  resource_group_name = var.resource_group_name
+  azure_location      = var.azure_location
+  app_name            = "tridentity"
+  environment         = "dev"
+  instance_name       = "fnieto"
+  sku                 = "standard"
+  sku_capacity        = 2
+  zone_redundant      = true
+  sb_allowed_ips      = ["1.1.1.1/32", "8.8.8.8/32"]
+
+  kv_id = module.key_vault.id
+
+  tags = {
+    Projecto    = "Terraform Templates"
+    Responsable = "fnieto@kabel.es"
+    Area        = "Architecture & Operations"
   }
 }

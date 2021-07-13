@@ -3,22 +3,47 @@ variable "resource_group_name" {
   type        = string
   description = "(Required) The name of the resource group in which to create the Resource. Changing this forces a new resource to be created."
 }
-variable "server_name" {
+
+variable "app_name" {
   type        = string
-  description = "(Required) The name of the Microsoft SQL Server. This needs to be globally unique within Azure."
+  description = "Project or Application name, added to all resource names as a prefix."
   validation {
-    condition     = can(regex("^[a-z0-9]{1}[a-z0-9-]{1,61}[a-z0-9]{1}$", var.server_name))
-    error_message = "Server name can contain only lowercase letters, numbers, and hyphen; but can't start or end with hyphen or have more than 63 characters."
+    condition = (
+      length(var.app_name) >= 2 &&
+      length(var.app_name) <= 10 &&
+      can(regex("^[a-zA-Z0-9]+$", var.app_name))
+    )
+    error_message = "(Required) The application name must be between 2 to 10 characters, only letters and numbers are allowed."
   }
 }
-variable "database_name" {
+
+variable "environment" {
   type        = string
-  description = "(Required) The name of the Ms SQL Database. Changing this forces a new resource to be created."
+  description = "environment short name"
+  default     = "dev"
   validation {
-    condition     =  length(var.database_name) <= 128
-    error_message = "Database name must have a length of at most 128, and can't contain some special characters."
+    condition     = contains(["dev", "pre", "pro"], var.environment)
+    error_message = "(Required) The environment specified must be one of the allowed values (dev, pre, pro)."
   }
+
 }
+# variable "server_name" {
+#   type        = string
+#   description = "(Required) The name of the Microsoft SQL Server. This needs to be globally unique within Azure."
+#   validation {
+#     condition     = can(regex("^[a-z0-9]{1}[a-z0-9-]{1,61}[a-z0-9]{1}$", var.server_name))
+#     error_message = "Server name can contain only lowercase letters, numbers, and hyphen; but can't start or end with hyphen or have more than 63 characters."
+#   }
+# }
+
+# variable "database_name" {
+#   type        = string
+#   description = "(Required) The name of the Ms SQL Database. Changing this forces a new resource to be created."
+#   validation {
+#     condition     =  length(var.database_name) <= 128
+#     error_message = "Database name must have a length of at most 128, and can't contain some special characters."
+#   }
+# }
 variable "server_admingroup_name"{
   type = string
   description = "(Required) Name of the Azure AD Group for Administrators of the SQL Server."
@@ -31,6 +56,20 @@ variable "kv_id" {
 }
 
 ####OPTIONAL Input Variables
+variable "instance_name" {
+  type        = string
+  description = "(Optional) part of the name to identify this instance of the resource service from other existing ones."
+  validation {
+    condition = (
+      length(var.instance_name) >= 2 &&
+      length(var.instance_name) <= 6 &&
+      can(regex("^[a-zA-Z0-9]+$", var.instance_name))
+    )
+    error_message = "(Required) The instance name must be between 2 to 6 characters, only letters and numbers are allowed."
+  }
+  default = ""
+}
+
 variable "azure_location" {
   type        = string
   description = "(Optional) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created. Defaults to westeurope."
@@ -77,11 +116,29 @@ variable "database_max_size_gb" {
   default     = 0
 }
 
+#Deployment current public IP
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"
+}
+
+## Read global config from key vault
+data "azurerm_key_vault" "config" {
+  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE2"
+  resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-PRE"
+}
+data "azurerm_key_vault_secret" "fw-allowed-ips" {
+  name = "fw-allowed-ips"
+  key_vault_id = data.azurerm_key_vault.config.id
+} 
+
 # Local variables used to reduce repetition 
 locals {
-  server_deploy_ips = [
-    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
-    "40.74.28.0/23", #AzureDevOps.WestEurope
-    "137.135.128.0/17" #AzureCloud.northeurope
-  ]
+  sql_server_name   = var.instance_name != "" ? "dbs-${lower(var.app_name)}-${lower(var.instance_name)}-${lower(var.environment)}" : "dbs-${lower(var.app_name)}-${lower(var.environment)}"
+  sql_database_name = var.instance_name != "" ? "DB-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "DB-${upper(var.app_name)}-${upper(var.environment)}"
+
+  server_allowed_ips = distinct(concat(     
+    var.server_allowed_ips,
+    jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips.value)),
+    [ chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null ]
+  ))
 }

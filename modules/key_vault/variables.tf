@@ -103,9 +103,7 @@ variable "kv_allowed_ips" {
 # Local variables used to reduce repetition 
 locals {
   kv_fw_ips = concat(var.kv_allowed_ips, [
-    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
-    "40.74.28.0/23",   #AzureDevOps.WestEurope
-    "137.135.128.0/17" #AzureCloud.northeurope
+    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null
   ])
   kv_access_policies = concat(var.kv_access_policies, [{
     object_id               = data.azurerm_client_config.current.object_id

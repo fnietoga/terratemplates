@@ -7,7 +7,7 @@ variable "kv_name" {
   type        = string
   description = " (Required) Specifies the name of the Key Vault. Changing this forces a new resource to be created."
   validation {
-    condition = can(regex("^[a-zA-Z]{1}[a-zA-Z0-9-]{2,23}$",var.kv_name))
+    condition     = can(regex("^[a-zA-Z]{1}[a-zA-Z0-9-]{2,23}$", var.kv_name))
     error_message = "Vault name must only contain alphanumeric characters and dashes and cannot start with a number, and must be between 3 and 24 alphanumeric characters."
   }
 }
@@ -24,10 +24,10 @@ variable "azure_location" {
 }
 
 variable "tags" {
-  type = map
+  type        = map(any)
   description = "(Optional) A mapping of tags which should be assigned to the resource."
-  default= {}
-} 
+  default     = {}
+}
 
 variable "kv_sku_name" {
   type        = string
@@ -74,7 +74,7 @@ variable "kv_soft_delete_retention_days" {
   description = "(Optional) The number of days that items should be retained for once soft-deleted. This value can be between 7 and 90 (the default) days"
   default     = 90
   validation {
-    condition     = (
+    condition = (
       var.kv_soft_delete_retention_days >= 7 &&
       var.kv_soft_delete_retention_days <= 90
     )
@@ -91,7 +91,7 @@ variable "kv_access_policies" {
     storage_permissions     = optional(list(string))
   }))
   description = "Object collection with information for additional access policies access to be applied to the Deployment Key Vault."
-  default = []
+  default     = []
 }
 
 variable "kv_allowed_ips" {
@@ -103,16 +103,15 @@ variable "kv_allowed_ips" {
 # Local variables used to reduce repetition 
 locals {
   kv_fw_ips = concat(var.kv_allowed_ips, [
-     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
-    "40.74.28.0/23", #AzureDevOps.WestEurope
+    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
+    "40.74.28.0/23",   #AzureDevOps.WestEurope
     "137.135.128.0/17" #AzureCloud.northeurope
   ])
-  kv_access_policies = [var.kv_access_policies, {
-    "tenant_id"               = data.azurerm_client_config.current.tenant_id
-    "object_id"               = data.azurerm_client_config.current.object_id
-    "key_permissions"         = ["get", "list", "create", "update", "verify", "delete", "purge"]
-    "certificate_permissions" = ["get", "list", "create", "update", "delete", "purge", "recover"]
-    "secret_permissions"      = ["get", "list", "set", "delete", "purge", "recover", "backup", "restore"]
-    "storage_permissions"     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
-  }]
+  kv_access_policies = concat(var.kv_access_policies, [{
+    object_id               = data.azurerm_client_config.current.object_id
+    certificate_permissions = ["get", "list", "create", "update", "delete", "purge", "recover"]
+    key_permissions         = ["get", "list", "create", "update", "verify", "delete", "purge"]
+    secret_permissions      = ["get", "list", "set", "delete", "purge", "recover", "backup", "restore"]
+    storage_permissions     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
+  }])
 }

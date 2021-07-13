@@ -2,7 +2,7 @@
 ## D E V
 #############
 $clientId = '2eb722dc-e6c8-4046-b2ad-8bd1bccaf192'; ##fnietokabel-deploy
-$clientKey = 'm.R6G7Z30yWIhm4F-5-__Ri_3o4yg4q7tY'; ##removed before commit
+$clientKey = Get-Secret -Name 'fnieto_fnietokabel-deploy' -AsPlainText
 $tenantId = '9d326c83-750e-4534-9037-94b786446bf0'; ##fnietokabel.onmicrosoft.com
 $subscriptionId = '841bc417-7db7-4e2e-82d3-c80bd04ab305'##Visual Studio Enterprise con MSDN
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $clientId, ($clientKey | ConvertTo-SecureString -AsPlainText -Force); $token = ((Invoke-WebRequest -Uri $('https://login.windows.net/' + $tenantId + '/oauth2/token') -Method 'POST' -Headers @{contentype = 'application/json'; Metadata = 'true' } -Body  @{resource = 'https://graph.windows.net/'; grant_type = 'client_credentials'; client_id = $clientId; client_secret = $clientKey } -UseBasicParsing).Content | ConvertFrom-Json).access_token; Connect-AzAccount -TenantId $tenantId -ServicePrincipal -Credential $Credentials -Subscription $subscriptionId;

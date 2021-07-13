@@ -16,6 +16,8 @@ resource "azurerm_servicebus_namespace" "namespace" {
 }
 
 resource "azurerm_servicebus_namespace_network_rule_set" "namespace_network_rule_set" {
+  count = var.sku == "premium" ? 1 : 0
+
   namespace_name      = azurerm_servicebus_namespace.namespace.name
   resource_group_name = var.resource_group_name
 

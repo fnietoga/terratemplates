@@ -134,7 +134,7 @@ module "application_insights" {
   azure_location       = var.azure_location
   app_name            = "terra"
   environment         = "dev"
-  instance_name       = "fnieto"
+  instance_name       = ""
   #name                 = "terra-ins-dev"
   application_type     = "web"
   daily_data_cap_in_gb = 10

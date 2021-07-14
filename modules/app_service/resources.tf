@@ -1,14 +1,10 @@
 #Deployment current context
 data "azurerm_client_config" "current" {
 }
-#Deployment current public IP
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
 
 # Web app plan
 resource "azurerm_app_service_plan" "app_plan" {
-  name                = var.plan_name
+  name                = local.app_plan_name
   location            = var.azure_location
   resource_group_name = var.resource_group_name
   kind                = var.plan_kind
@@ -26,7 +22,7 @@ resource "azurerm_app_service_plan" "app_plan" {
 
 # Web app
 resource "azurerm_app_service" "app" {
-  name                = var.app_name
+  name                = local.app_name
   location            = var.azure_location
   resource_group_name = var.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.app_plan.id

@@ -3,16 +3,45 @@ variable "resource_group_name" {
   type        = string
   description = "(Required) The name of the resource group in which to create the Resource. Changing this forces a new resource to be created."
 }
-variable "kv_name" {
+
+variable "app_name" {
   type        = string
-  description = " (Required) Specifies the name of the Key Vault. Changing this forces a new resource to be created."
+  description = "Project or Application name, added to all resource names as a prefix."
   validation {
-    condition     = can(regex("^[a-zA-Z]{1}[a-zA-Z0-9-]{2,23}$", var.kv_name))
-    error_message = "Vault name must only contain alphanumeric characters and dashes and cannot start with a number, and must be between 3 and 24 alphanumeric characters."
+    condition = (
+      length(var.app_name) >= 2 &&
+      length(var.app_name) <= 10 &&
+      can(regex("^[a-zA-Z0-9]+$", var.app_name))
+    )
+    error_message = "(Required) The application name must be between 2 to 10 characters, only letters and numbers are allowed."
+  }
+}
+
+variable "environment" {
+  type        = string
+  description = "environment short name"
+  default     = "dev"
+  validation {
+    condition     = contains(["dev", "pre", "pro"], var.environment)
+    error_message = "(Required) The environment specified must be one of the allowed values (dev, pre, pro)."
   }
 }
 
 ####OPTIONAL Input Variables
+variable "instance_name" {
+  type        = string
+  description = "(Optional) part of the name to identify this instance of the resource service from other existing ones."
+  validation {
+    condition = (
+      length(var.instance_name) >= 2 &&
+      length(var.instance_name) <= 6 &&
+      can(regex("^[a-zA-Z0-9]+$", var.instance_name))
+    )
+    error_message = "(Required) The instance name must be between 2 to 6 characters, only letters and numbers are allowed."
+  }
+  default = ""
+}
+
 variable "azure_location" {
   type        = string
   description = "(Optional) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created. Defaults to westeurope."
@@ -98,15 +127,31 @@ variable "kv_allowed_ips" {
   type        = list(string)
   description = "(Optional) List of IP Addresses to allow through the Key Vault firewall."
   default     = []
+} 
+
+#Deployment current public IP
+data "http" "myip" {
+  url = "http://ipv4.icanhazip.com"  
 }
+
+## Read global config from key vault
+data "azurerm_key_vault" "config" {
+  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE2"
+  resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-PRE"
+}
+data "azurerm_key_vault_secret" "fw-allowed-ips" {
+  name = "fw-allowed-ips"
+  key_vault_id = data.azurerm_key_vault.config.id
+} 
 
 # Local variables used to reduce repetition 
 locals {
-  kv_fw_ips = concat(var.kv_allowed_ips, [
-    chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null,
-    "40.74.28.0/23",   #AzureDevOps.WestEurope
-    "137.135.128.0/17" #AzureCloud.northeurope
-  ])
+  kv_name = var.instance_name != "" ? "KVT-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "KVT-${upper(var.app_name)}-${upper(var.environment)}"
+  kv_fw_ips = distinct(concat(
+    var.kv_allowed_ips, 
+    jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips.value)),
+    [ chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null ]
+  ))
   kv_access_policies = concat(var.kv_access_policies, [{
     object_id               = data.azurerm_client_config.current.object_id
     certificate_permissions = ["get", "list", "create", "update", "delete", "purge", "recover"]

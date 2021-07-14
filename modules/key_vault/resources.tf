@@ -1,14 +1,10 @@
 #Deployment current context
 data "azurerm_client_config" "current" {
 }
-#Deployment current public IP
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
 
 # Deploy the Key Vault 
 resource "azurerm_key_vault" "deploy_kv" {
-  name                = var.kv_name
+  name                = local.kv_name
   location            = var.azure_location
   resource_group_name = var.resource_group_name
   tenant_id           = data.azurerm_client_config.current.tenant_id

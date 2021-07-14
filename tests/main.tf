@@ -21,8 +21,12 @@ module "key_vault" {
 
   resource_group_name = var.resource_group_name
   azure_location      = var.azure_location
-  kv_name             = "terra-kv-dev"
-  kv_sku_name         = "premium"
+  app_name            = "terra"
+  environment         = "dev"
+  instance_name       = "fnieto"
+
+  #kv_name             = "terra-kv-dev"
+  kv_sku_name = "premium"
   tags = {
     Projecto    = "Terraform Templates"
     Responsable = "fnieto@kabel.es"
@@ -41,9 +45,12 @@ module "storage_account" {
   #source = "git::https://github.com/fnietoga/terratemplates.git//modules/storage_account"
   source = "../modules/storage_account"
 
-  resource_group_name          = var.resource_group_name
-  azure_location               = var.azure_location
-  sta_name                     = "terrastadev"
+  resource_group_name = var.resource_group_name
+  azure_location      = var.azure_location
+  app_name            = "terra"
+  environment         = "dev"
+  instance_name       = "fnieto"
+  #sta_name                     = "terrastadev"
   sta_account_tier             = "Standard"
   sta_account_replication_type = "LRS"
   sta_access_tier              = "Hot"
@@ -65,12 +72,18 @@ module "mssql_server" {
   #source = "git::https://github.com/fnietoga/terratemplates.git//modules/mssql_server"
   source = "../modules/mssql_server"
 
-  resource_group_name    = var.resource_group_name
-  azure_location         = var.azure_location
-  server_name            = "terra-sql-dev"
-  database_name          = "db-tridentity-tst"
+  resource_group_name = var.resource_group_name
+  azure_location      = var.azure_location
+  app_name            = "terra"
+  environment         = "dev"
+  instance_name       = "fnieto"
+  # server_name            = "terra-sql-dev"
+  # database_name          = "db-tridentity-tst"
+
   server_admingroup_name = "DBAdmin"
   database_sku_name      = "S0"
+
+  server_allowed_ips = ["1.1.1.1", "8.8.8.8"]
 
   tags = {
     Projecto    = "Terraform Templates"
@@ -90,8 +103,11 @@ module "app_service" {
 
   resource_group_name = var.resource_group_name
   azure_location      = var.azure_location
-  app_name            = "terra-app-dev"
-  plan_name           = "terra-plan-dev"
+  app_name            = "terra"
+  environment         = "dev"
+  instance_name       = "fnieto"
+  # app_name            = "terra-app-dev"
+  # plan_name           = "terra-plan-dev"
   tags = {
     Projecto    = "Terraform Templates"
     Responsable = "fnieto@kabel.es"
@@ -116,7 +132,10 @@ module "application_insights" {
 
   resource_group_name  = var.resource_group_name
   azure_location       = var.azure_location
-  name                 = "terra-ins-dev"
+  app_name            = "terra"
+  environment         = "dev"
+  instance_name       = "fnieto"
+  #name                 = "terra-ins-dev"
   application_type     = "web"
   daily_data_cap_in_gb = 10
   disable_ip_masking   = true
@@ -157,10 +176,10 @@ module "service_bus" {
 
   resource_group_name = var.resource_group_name
   azure_location      = var.azure_location
-  app_name            = "tridentity"
+  app_name            = "terra"
   environment         = "dev"
   instance_name       = "fnieto"
-  sku                 = "standard"
+  sku                 = "premium"
   sku_capacity        = 2
   zone_redundant      = true
   sb_allowed_ips      = ["1.1.1.1/32", "8.8.8.8/32"]

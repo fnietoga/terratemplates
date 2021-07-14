@@ -59,9 +59,9 @@ variable "azure_location" {
 }
 
 variable "tags" {
-  type = map
+  type        = map(any)
   description = "(Optional) A mapping of tags which should be assigned to the resource."
-  default= {}
+  default     = {}
 }
 
 variable "sku" {
@@ -89,7 +89,7 @@ variable "zone_redundant" {
   description = "(Optional) Whether or not this resource is zone redundant. sku needs to be Premium. Defaults to false."
   default     = false
 }
- 
+
 variable "sb_allowed_ips" {
   type        = list(string)
   description = "(Optional) List of IP Addresses to allow through the Service Bus Network Rule Set."
@@ -101,10 +101,22 @@ data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
 }
 
+## Read global config from key vault
+data "azurerm_key_vault" "config" {
+  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE2"
+  resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-PRE"
+}
+data "azurerm_key_vault_secret" "fw-allowed-ips" {
+  name         = "fw-allowed-ips"
+  key_vault_id = data.azurerm_key_vault.config.id
+}
+
 # Local variables used to reduce repetition 
 locals {
   sb_name = var.instance_name != "" ? "SB-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "SB-${upper(var.app_name)}-${upper(var.environment)}"
-  sb_fw_ips = concat(var.sb_allowed_ips, [
-     chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null
-  ])
+  sb_fw_ips = distinct(concat(
+    var.sb_allowed_ips,
+    jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips.value)),
+    [chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null]
+  ))
 }

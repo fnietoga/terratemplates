@@ -1,10 +1,7 @@
 #Deployment current context
 data "azurerm_client_config" "current" {
 }
-#Deployment current public IP
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
+
 #SQL Admins group information
 data "azuread_group" "server_admins"{
   display_name     = var.server_admingroup_name
@@ -23,7 +20,7 @@ resource "random_password" "server_admin_password" {
 }
 
 resource "azurerm_mssql_server" "server" {
-  name                          = var.server_name
+  name                          = local.sql_server_name
   location                      = var.azure_location
   resource_group_name           = var.resource_group_name
   administrator_login           = var.server_administrator_login
@@ -42,12 +39,12 @@ resource "azurerm_mssql_server" "server" {
 }
 
 resource "azurerm_mssql_firewall_rule" "server_fwdeploy" {
-  count = length(local.server_deploy_ips) == 0 ? 0 : 1
+  count = length(local.server_allowed_ips) == 0 ? 0 : 1
 
   name             = "DeploymentIps-${count.index}"
   server_id        = azurerm_mssql_server.server.id
-  start_ip_address = local.server_deploy_ips[count.index]
-  end_ip_address   = local.server_deploy_ips[count.index]
+  start_ip_address = local.server_allowed_ips[count.index]
+  end_ip_address   = local.server_allowed_ips[count.index]
 }
 
 resource "azurerm_mssql_firewall_rule" "server_fwallowed" {
@@ -60,7 +57,7 @@ resource "azurerm_mssql_firewall_rule" "server_fwallowed" {
 }
 
 resource "azurerm_mssql_database" "database" {
-  name               = var.database_name
+  name               = local.sql_database_name
   server_id          = azurerm_mssql_server.server.id
   create_mode        = "Default"
   sku_name           = var.database_sku_name

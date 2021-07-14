@@ -3,10 +3,34 @@ variable "resource_group_name" {
   type        = string
   description = "(Required) The name of the resource group in which to create the Resource. Changing this forces a new resource to be created."
 }
-variable "name" {
+
+variable "app_name" {
   type        = string
-  description = "(Required) Name of the Application Insights component. Changing this forces a new resource to be created."
+  description = "Project or Application name, added to all resource names as a prefix."
+  validation {
+    condition = (
+      length(var.app_name) >= 2 &&
+      length(var.app_name) <= 10 &&
+      can(regex("^[a-zA-Z0-9]+$", var.app_name))
+    )
+    error_message = "(Required) The application name must be between 2 to 10 characters, only letters and numbers are allowed."
+  }
 }
+
+variable "environment" {
+  type        = string
+  description = "environment short name"
+  default     = "dev"
+  validation {
+    condition     = contains(["dev", "pre", "pro"], var.environment)
+    error_message = "(Required) The environment specified must be one of the allowed values (dev, pre, pro)."
+  }
+}
+
+# variable "name" {
+#   type        = string
+#   description = "(Required) Name of the Application Insights component. Changing this forces a new resource to be created."
+# }
 
 variable "kv_id" {
   type        = string
@@ -14,6 +38,20 @@ variable "kv_id" {
 }
 
 ####OPTIONAL Input Variables
+variable "instance_name" {
+  type        = string
+  description = "(Optional) part of the name to identify this instance of the resource service from other existing ones."
+  validation {
+    condition = (
+      length(var.instance_name) >= 2 &&
+      length(var.instance_name) <= 6 &&
+      can(regex("^[a-zA-Z0-9]+$", var.instance_name))
+    )
+    error_message = "(Required) The instance name must be between 2 to 6 characters, only letters and numbers are allowed."
+  }
+  default = ""
+}
+
 variable "azure_location" {
   type        = string
   description = "(Optional) Specifies the supported Azure location where the resource exists. Changing this forces a new resource to be created. Defaults to westeurope."
@@ -63,7 +101,7 @@ variable "disable_ip_masking" {
   default     = false
 }
 
-
 # Local variables used to reduce repetition 
 locals {
+  insights_name     = var.instance_name != "" ? "INS-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "INS-${upper(var.app_name)}-${upper(var.environment)}"
 }

@@ -1,10 +1,5 @@
-#Deployment current public IP
-data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"
-}
-
 resource "azurerm_storage_account" "sta" {
-  name                      = var.sta_name
+  name                      = local.sta_name
   resource_group_name       = var.resource_group_name
   location                  = var.azure_location
   account_kind              = var.sta_account_kind

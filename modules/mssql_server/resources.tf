@@ -48,7 +48,7 @@ resource "azurerm_mssql_server" "server" {
 # }
 
 resource "azurerm_mssql_firewall_rule" "server_fwallowed" {
-  count = length(local.server_allowed_ips) == 0 ? 0 : 1
+  count = length(local.server_allowed_ips) 
 
   name             = "AllowedIp-${count.index}"
   server_id        = azurerm_mssql_server.server.id

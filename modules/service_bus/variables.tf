@@ -9,9 +9,11 @@ variable "app_name" {
   description = "Project or Application name, added to all resource names as a prefix."
   validation {
     condition = (
-      length(var.app_name) >= 2 &&
-      length(var.app_name) <= 17 &&
-      can(regex("^[a-zA-Z0-9]+$", var.app_name))
+      length(var.instance_name) == 0 || (
+        length(var.app_name) >= 2 &&
+        length(var.app_name) <= 17 &&
+        can(regex("^[a-zA-Z0-9]+$", var.app_name))
+      )
     )
     error_message = "(Required) The application name must be between 2 to 17 characters, only letters and numbers are allowed."
   }
@@ -39,11 +41,11 @@ variable "instance_name" {
   description = "(Optional) part of the name to identify this instance of the resource service from other existing ones."
   validation {
     condition = (
-      length(var.instance_name) >= 2 &&
+      length(var.instance_name) >= 0 &&
       length(var.instance_name) <= 25 &&
       can(regex("^[a-zA-Z0-9]+$", var.instance_name))
     )
-    error_message = "(Required) The instance name must be between 2 to 25 characters, only letters and numbers are allowed."
+    error_message = "(Required) The instance name must be between 0 to 25 characters, only letters and numbers are allowed."
   }
   default = ""
 }

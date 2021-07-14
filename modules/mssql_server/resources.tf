@@ -38,22 +38,22 @@ resource "azurerm_mssql_server" "server" {
   tags = var.tags
 }
 
-resource "azurerm_mssql_firewall_rule" "server_fwdeploy" {
-  count = length(local.server_allowed_ips) == 0 ? 0 : 1
+# resource "azurerm_mssql_firewall_rule" "server_fwdeploy" {
+#   count = length(local.server_allowed_ips) == 0 ? 0 : 1
 
-  name             = "DeploymentIps-${count.index}"
-  server_id        = azurerm_mssql_server.server.id
-  start_ip_address = local.server_allowed_ips[count.index]
-  end_ip_address   = local.server_allowed_ips[count.index]
-}
+#   name             = "DeploymentIps-${count.index}"
+#   server_id        = azurerm_mssql_server.server.id
+#   start_ip_address = local.server_allowed_ips[count.index]
+#   end_ip_address   = local.server_allowed_ips[count.index]
+# }
 
 resource "azurerm_mssql_firewall_rule" "server_fwallowed" {
-  count = length(var.server_allowed_ips) == 0 ? 0 : 1
+  count = length(local.server_allowed_ips) == 0 ? 0 : 1
 
   name             = "AllowedIp-${count.index}"
   server_id        = azurerm_mssql_server.server.id
-  start_ip_address = var.server_allowed_ips[count.index]
-  end_ip_address   = var.server_allowed_ips[count.index]
+  start_ip_address = local.server_allowed_ips[count.index]
+  end_ip_address   = local.server_allowed_ips[count.index]
 }
 
 resource "azurerm_mssql_database" "database" {

@@ -105,7 +105,7 @@ data "http" "myip" {
 
 ## Read global config from key vault
 data "azurerm_key_vault" "config" {
-  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE2"
+  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE"
   resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-PRE"
 }
 data "azurerm_key_vault_secret" "fw-allowed-ips" {

@@ -12,7 +12,7 @@ resource "azurerm_storage_account" "sta" {
   is_hns_enabled            = var.sta_is_hns_enabled
 
   network_rules {
-    default_action = "Deny"
+    default_action = "Allow"
     bypass         = ["None"] #["Logging","Metrics"]
     ip_rules       = local.sta_fw_ips
   }

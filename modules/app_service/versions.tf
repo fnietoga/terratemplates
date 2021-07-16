@@ -20,3 +20,9 @@ provider "azurerm" {
   features {}
   skip_provider_registration = true
 }
+provider "azurerm" {
+  features {}
+  alias           = "certKeyvault"
+  subscription_id = local.cert_keyvault_subscription
+  skip_provider_registration = true
+}

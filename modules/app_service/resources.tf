@@ -153,20 +153,42 @@ resource "azurerm_app_service_slot" "app_slot" {
   }
 
   tags = var.tags
-
 }
 
+
+##Certificate KeyVault and Secret
+data "azurerm_key_vault" "cert_keyvault" {
+  provider            = azurerm.certKeyvault
+  name                = local.cert_keyvault_name
+  resource_group_name = local.cert_keyvault_resource_group
+}
+
+data "azurerm_key_vault_certificate" "cert_keyvault_cert" {
+  provider     = azurerm.certKeyvault
+  name         = var.certificate_name
+  key_vault_id = data.azurerm_key_vault.cert_keyvault.id
+}
+
+data "azurerm_key_vault_secret" "cert_keyvault_secret" {
+  provider     = azurerm.certKeyvault
+  name         = var.certificate_name
+  key_vault_id = data.azurerm_key_vault.cert_keyvault.id
+}
+
+
 resource "azurerm_app_service_certificate" "app_certificate" {
-  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+  count = var.custom_hostname != "" && var.certificate_keyvault_resourceId != "" && var.certificate_name != "" ? 1 : 0
 
   name                = "${var.custom_hostname}-cert"
   location            = var.azure_location
   resource_group_name = var.resource_group_name
-  key_vault_secret_id = var.key_vault_secret_id
+
+  key_vault_secret_id = data.azurerm_client_config.current.subscription_id == local.cert_keyvault_subscription ? data.azurerm_key_vault_certificate.cert_keyvault_cert.secret_id : null ##only allowed when cert keyvault is in the same subscription
+  pfx_blob            = data.azurerm_client_config.current.subscription_id != local.cert_keyvault_subscription ? data.azurerm_key_vault_secret.cert_keyvault_secret.value : null
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "app_binding" {
-  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+  count = var.custom_hostname != "" && var.certificate_keyvault_resourceId != "" && var.certificate_name != "" ? 1 : 0
 
   hostname            = var.custom_hostname
   app_service_name    = azurerm_app_service.app.name
@@ -180,7 +202,7 @@ resource "azurerm_app_service_custom_hostname_binding" "app_binding" {
 }
 
 resource "azurerm_app_service_certificate_binding" "app_certificate_binding" {
-  count = var.custom_hostname != "" && var.key_vault_secret_id != "" ? 1 : 0
+  count = var.custom_hostname != "" && var.certificate_keyvault_resourceId != "" && var.certificate_name != "" ? 1 : 0
 
   hostname_binding_id = azurerm_app_service_custom_hostname_binding.app_binding[0].id
   certificate_id      = azurerm_app_service_certificate.app_certificate[0].id

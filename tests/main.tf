@@ -123,7 +123,8 @@ module "app_service" {
   ad_app_id = "d1578f5f-ca89-4369-8c7e-66f267ffb551"
 
   custom_hostname     = "terraform.fnietoga.me"
-  key_vault_secret_id = ""
+  certificate_keyvault_resourceId = "/subscriptions/e379beac-a2e0-4ecc-a110-ec39c7229cb3/resourceGroups/RG-IAC-CERT/providers/Microsoft.KeyVault/vaults/KVT-IAC-CERT"
+  certificate_name = "terraform-fnietoga-me-selfsigned"
 }
 
 module "application_insights" {

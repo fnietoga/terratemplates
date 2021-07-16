@@ -19,12 +19,11 @@ $Env:ARM_SUBSCRIPTION_ID = $subscriptionId
 $Env:ARM_TENANT_ID = $tenantId
 $Env:ARM_TENANT_ID = $tenantId
 
-$Env:TF_VAR_kv_allowed_ips = '["1.1.1.1","8.8.8.8"]'
-
 terraform init -upgrade 
 #terraform validate
 terraform plan -out .terraform/templates.tfplan
 terraform apply -auto-approve ".terraform/templates.tfplan"
 
 
+terraform destroy -auto-approve ".terraform/templates.tfplan"
 az keyvault purge -n KVT-TERRA-FNIETO-DEV -l westeurope

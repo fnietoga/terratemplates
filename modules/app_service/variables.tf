@@ -221,11 +221,22 @@ variable "ad_app_id" {
   default     = ""
 }
 
-variable "key_vault_secret_id" {
+# variable "key_vault_secret_id" {
+#   type        = string
+#   description = "(Optional) The ID of the Key Vault secret for to the custom hostname certificate. Changing this forces a new resource to be created."
+#   default     = ""
+# }
+
+variable "certificate_keyvault_resourceId" {
   type        = string
-  description = "(Optional) The ID of the Key Vault secret for to the custom hostname certificate. Changing this forces a new resource to be created."
+  description = "(Optional) The ResourceId of the Key Vault when are stored the custom hostname certificate. Needed if a custom hostname are specidied."
   default     = ""
-}
+} 
+variable "certificate_name" {
+  type        = string
+  description = "(Optional) The Name of the certificate to be used for the custom hostname. Needed if a custom hostname are specidied."
+  default     = ""
+} 
 
 variable "custom_hostname" {
   type        = string
@@ -240,8 +251,8 @@ data "http" "myip" {
 
 ## Read global config from key vault
 data "azurerm_key_vault" "config" {
-  name                = var.environment == "pro" ? "KVT-IAC-PRO" : "KVT-IAC-PRE"
-  resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-PRE"
+  name                = "KVT-IAC-${upper(var.environment)}"
+  resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-${upper(var.environment)}"
 }
 data "azurerm_key_vault_secret" "fw-allowed-ips" {
   name = "fw-allowed-ips"
@@ -252,6 +263,10 @@ data "azurerm_key_vault_secret" "fw-allowed-ips" {
 locals {
   app_plan_name     = var.instance_name != "" ? "SP-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "SP-${upper(var.app_name)}-${upper(var.environment)}"
   app_name          = var.instance_name != "" ? "WEB-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "WEB-${upper(var.app_name)}-${upper(var.environment)}"
+  cert_keyvault_subscription = split("/", var.certificate_keyvault_resourceId)[2]
+  cert_keyvault_resource_group =  split("/", var.certificate_keyvault_resourceId)[4]
+  cert_keyvault_name =  split("/", var.certificate_keyvault_resourceId)[8]
+  
   app_fw_ips = distinct(concat(
       var.app_allowed_ips, 
       jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips.value)),

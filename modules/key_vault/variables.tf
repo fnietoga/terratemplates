@@ -134,7 +134,7 @@ variable "kv_allowed_ips" {
 variable "apply_global_config" {
   type        = bool
   description = "(Optional) Specify if the global configuration must be applied."
-  default     = false
+  default     = true
 }
 
 #Deployment current public IP

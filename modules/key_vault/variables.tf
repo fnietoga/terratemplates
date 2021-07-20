@@ -129,30 +129,40 @@ variable "kv_allowed_ips" {
   type        = list(string)
   description = "(Optional) List of IP Addresses to allow through the Key Vault firewall."
   default     = []
-} 
+}
+
+variable "apply_global_config" {
+  type        = bool
+  description = "(Optional) Specify if the global configuration must be applied."
+  default     = true
+}
 
 #Deployment current public IP
 data "http" "myip" {
-  url = "http://ipv4.icanhazip.com"  
+  url = "http://ipv4.icanhazip.com"
 }
 
 ## Read global config from key vault
 data "azurerm_key_vault" "config" {
+  count = var.apply_global_config == true ? 1 : 0
+
   name                = "KVT-IAC-${upper(var.environment)}"
   resource_group_name = var.environment == "pro" ? "RG-IAC" : "RG-IAC-${upper(var.environment)}"
 }
 data "azurerm_key_vault_secret" "fw-allowed-ips" {
-  name = "fw-allowed-ips"
-  key_vault_id = data.azurerm_key_vault.config.id
-} 
+  count = var.apply_global_config == true ? 1 : 0
+
+  name         = "fw-allowed-ips"
+  key_vault_id = data.azurerm_key_vault.config[0].id
+}
 
 # Local variables used to reduce repetition 
 locals {
   kv_name = var.instance_name != "" ? "KVT-${upper(var.app_name)}-${upper(var.instance_name)}-${upper(var.environment)}" : "KVT-${upper(var.app_name)}-${upper(var.environment)}"
   kv_fw_ips = distinct(concat(
-    var.kv_allowed_ips, 
-    jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips.value)),
-    [ chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null ]
+    var.kv_allowed_ips,
+    var.apply_global_config == true ? jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips[0].value)) : [],
+    [chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null]
   ))
   kv_access_policies = concat(var.kv_access_policies, [{
     object_id               = data.azurerm_client_config.current.object_id

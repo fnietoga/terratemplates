@@ -39,6 +39,7 @@ module "key_vault" {
     }
   ]
   kv_allowed_ips = ["13.95.137.239"]
+  kv_certificate_contact_emails = ["fnieto@kabel.es","mmarting@tecnicasreunidas.es"]
 }
 
 module "storage_account" {

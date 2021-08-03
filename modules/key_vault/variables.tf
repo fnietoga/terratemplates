@@ -113,6 +113,12 @@ variable "kv_soft_delete_retention_days" {
   }
 }
 
+variable "kv_certificate_contact_emails" {
+  type = list(string)
+  description = "(Optional) List of certificate contact emails for the key vault. This operation requires the certificates/managecontacts permission."
+  default = []
+}
+
 variable "kv_access_policies" {
   type = list(object({
     object_id               = string
@@ -164,11 +170,12 @@ locals {
     var.apply_global_config == true ? jsondecode(nonsensitive(data.azurerm_key_vault_secret.fw-allowed-ips[0].value)) : [],
     [chomp(data.http.myip.body) != "" ? chomp(data.http.myip.body) : null]
   ))
-  kv_access_policies = concat(var.kv_access_policies, [{
+  deploy_identity_access_policy = {
     object_id               = data.azurerm_client_config.current.object_id
-    certificate_permissions = ["get", "list", "create", "update", "delete", "purge", "recover"]
+    certificate_permissions = ["get", "list", "create", "update", "delete", "purge", "recover", "managecontacts"]
     key_permissions         = ["get", "list", "create", "update", "verify", "delete", "purge"]
     secret_permissions      = ["get", "list", "set", "delete", "purge", "recover", "backup", "restore"]
     storage_permissions     = ["get", "list", "set", "update", "regeneratekey", "delete", "purge"]
-  }])
+  }
+  kv_access_policies = concat(var.kv_access_policies, [local.deploy_identity_access_policy])
 }

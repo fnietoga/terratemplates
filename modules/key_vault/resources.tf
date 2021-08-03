@@ -24,19 +24,26 @@ resource "azurerm_key_vault" "deploy_kv" {
     ip_rules       = local.kv_fw_ips
   }
 
+  dynamic "access_policy" {
+    for_each = local.kv_access_policies
+
+    content {
+      tenant_id               = data.azurerm_client_config.current.tenant_id
+      object_id               = access_policy.value.object_id
+      certificate_permissions = access_policy.value.certificate_permissions
+      secret_permissions      = access_policy.value.secret_permissions
+      key_permissions         = access_policy.value.key_permissions
+      storage_permissions     = access_policy.value.storage_permissions
+    }
+  } 
+
+  dynamic "contact" {
+    for_each = var.kv_certificate_contact_emails
+    content {
+      email = contact.value
+    }
+  }
+
   tags = var.tags
 
-}
-
-#Create requested access policies
-resource "azurerm_key_vault_access_policy" "kv_acl" {
-  for_each = { for acl in local.kv_access_policies : acl.object_id => acl }
-
-  key_vault_id            = azurerm_key_vault.deploy_kv.id
-  tenant_id               = data.azurerm_client_config.current.tenant_id
-  object_id               = each.value.object_id
-  certificate_permissions = each.value.certificate_permissions
-  secret_permissions      = each.value.secret_permissions
-  key_permissions         = each.value.key_permissions
-  storage_permissions     = each.value.storage_permissions
 }
